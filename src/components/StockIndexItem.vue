@@ -57,7 +57,7 @@ function fetchData(axios: AxiosStatic) {
     )
     const data = response.data
     info.pre = data.preClose
-    info.price = parseFloat(data.trends.pop().split(',')[1])
+    info.price = parseFloat(data.trends.pop().split(',')[2])
   }
 
   return { info, fetchIndexInfo }
