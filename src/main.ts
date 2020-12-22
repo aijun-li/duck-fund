@@ -6,6 +6,8 @@ import installElementPlus from './plugins/element'
 import installFontAwesome from './plugins/font-awesome'
 import axios from 'axios'
 
+import './styles/global.css'
+
 const app = createApp(App)
 
 app.use(store, key).use(router)
