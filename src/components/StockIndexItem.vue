@@ -95,9 +95,13 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
 
+  .index-name {
+    font-size: 0.85rem;
+  }
+
   .index-price {
-    font-size: 1.1rem;
     position: relative;
+    font-size: 0.95rem;
     .arrow-indicator {
       position: absolute;
       right: -0.4rem;
