@@ -6,4 +6,5 @@ export default interface StockPrice {
   gsz?: string
   gszzl?: string
   gztime?: string
+  jzzl?: string
 }
