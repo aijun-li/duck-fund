@@ -3,10 +3,9 @@
     :data="funds"
     :header-cell-style="{
       color: 'black',
-      padding: '5px 0',
-      'font-weight': 'bold'
+      padding: '5px 0'
     }"
-    :cell-style="{ padding: '3px 0' }"
+    :cell-style="{ padding: '3px 0', 'font-size': '0.85rem' }"
   >
     <el-table-column label="基金名称" min-width="2">
       <template #default="scope">
