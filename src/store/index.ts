@@ -14,17 +14,20 @@ export default createStore({
   },
   mutations: {
     // intialize the funds array with data from localStorage
-    initializeFunds(state, payload) {
-      state.funds = payload.funds.split(',').map((fundcode: string) => ({
-        fundcode,
-        name: '',
-        jzrq: '',
-        dwjz: '0.0000',
-        jzzl: '0.00',
-        gsz: '0.0000',
-        gszzl: '0.00',
-        gztime: ''
-      }))
+    initializeFunds(state) {
+      const storedFunds = localStorage.getItem('storedFunds')
+      if (storedFunds) {
+        state.funds = storedFunds.split(',').map((fundcode: string) => ({
+          fundcode,
+          name: '',
+          jzrq: '',
+          dwjz: '0.0000',
+          jzzl: '0.00',
+          gsz: '0.0000',
+          gszzl: '0.00',
+          gztime: ''
+        }))
+      }
     },
     // update the existing fund
     updateFund(state, price: StockPrice) {

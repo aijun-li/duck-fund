@@ -8,7 +8,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useStore } from '@/store'
 import FundList from '@/components/FundList.vue'
 import StockIndex from '@/components/StockIndex.vue'
 
@@ -16,12 +15,6 @@ export default defineComponent({
   components: {
     StockIndex,
     FundList
-  },
-  setup() {
-    const store = useStore()
-    store.commit('initializeFunds', {
-      funds: localStorage.getItem('storedFunds')!
-    })
   }
 })
 </script>
