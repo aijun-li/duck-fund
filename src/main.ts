@@ -7,6 +7,7 @@ import installFontAwesome from './plugins/font-awesome'
 import axios from 'axios'
 
 import './styles/global.css'
+import './styles/element.scss'
 
 const app = createApp(App)
 
