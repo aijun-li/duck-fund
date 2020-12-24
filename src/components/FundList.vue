@@ -6,6 +6,7 @@
       padding: '5px 0'
     }"
     :cell-style="{ padding: '3px 0', 'font-size': '0.85rem' }"
+    :height="615"
   >
     <el-table-column label="基金名称" min-width="2">
       <template #default="scope">
@@ -28,7 +29,8 @@
         <div>
           <div>净值</div>
           <div class="value-date">
-            {{ valueDate.net.slice(5, 10) }}
+            <!-- A default '00-00' is needed in order to calculate the height of the table body -->
+            {{ valueDate.net ? valueDate.net.slice(5, 10) : '00-00' }}
           </div>
         </div>
       </template>
@@ -69,7 +71,8 @@
         <div>
           <div>估值</div>
           <div class="value-date">
-            {{ valueDate.estimate.slice(5, 10) }}
+            <!-- A default '00-00' is needed in order to calculate the height of the table body -->
+            {{ valueDate.estimate ? valueDate.estimate.slice(5, 10) : '00-00' }}
           </div>
         </div>
       </template>
