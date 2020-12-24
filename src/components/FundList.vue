@@ -94,6 +94,15 @@
       </template>
     </el-table-column>
   </el-table>
+
+  <!-- Update info -->
+  <el-row class="bottom-info">
+    <el-col :span="12">数据来源: 天天基金网</el-col>
+    <el-col :span="12" style="text-align: right"
+      >估值更新于
+      {{ valueDate.estimate ? valueDate.estimate.slice(-5) : '--:--' }}</el-col
+    >
+  </el-row>
 </template>
 
 <script lang="ts">
@@ -136,7 +145,7 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
       if (
         !valueDate.estimate ||
         new Date(valueDate.estimate).getTime() <
-          new Date(price.gztime!.split(' ')[0]).getTime()
+          new Date(price.gztime!).getTime()
       ) {
         valueDate.estimate = price.gztime
       }
@@ -191,5 +200,11 @@ export default defineComponent({
 
 .price-down {
   color: green;
+}
+
+.bottom-info {
+  font-size: 0.75rem;
+  color: grey;
+  padding: 0.2rem 0.6rem;
 }
 </style>
