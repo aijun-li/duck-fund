@@ -85,7 +85,7 @@ export default defineComponent({
         if (isNowInTimePeriod('09:29:30', '15:30:30')) {
           fetchIndexInfo(code)
         }
-      }, 5000)
+      }, 10000)
     })
 
     return { info, change, changeP }

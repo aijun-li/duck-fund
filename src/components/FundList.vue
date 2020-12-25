@@ -171,7 +171,7 @@ export default defineComponent({
 
     fetchPrice()
     onMounted(() => {
-      setInterval(fetchPrice, 10000)
+      setInterval(fetchPrice, 30000)
     })
 
     return { funds, valueDate }
