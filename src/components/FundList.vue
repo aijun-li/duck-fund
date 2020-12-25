@@ -129,14 +129,15 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
       )
       // retrieve the previous day's change of value in percentage
       const { data: response2 } = await axios.get(
-        `https://www.dayfund.cn/ajs/ajaxdata.shtml?showtype=getfundvalue&fundcode=${fund.fundcode}`,
+        `http://api.fund.eastmoney.com/f10/lsjz?fundCode=${fund.fundcode}&pageIndex=1&pageSize=1`,
         {
           headers: { 'Cache-Control': 'no-cache' }
         }
       )
-      price.jzzl = parseFloat(response2.split('|')[4].slice(0, -1)).toFixed(2)
-      price.jzrq = response2.split('|')[0]
-      price.dwjz = response2.split('|')[1]
+      const jz = response2.Data.LSJZList[0]
+      price.jzrq = jz.FSRQ
+      price.dwjz = jz.DWJZ
+      price.jzzl = jz.JZZZL
 
       // update the displayed date of value
       if (
