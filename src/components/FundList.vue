@@ -3,15 +3,17 @@
     :data="funds"
     :header-cell-style="{
       color: 'black',
-      padding: '5px 0'
+      padding: '2px 0'
     }"
     :cell-style="{ padding: '3px 0', 'font-size': '0.85rem' }"
     :height="615"
   >
     <el-table-column label="基金名称" min-width="2">
       <template #default="scope">
-        <div style="text-align: left">{{ scope.row.name }}</div>
-        <div style="color: grey; text-align: left">
+        <div class="table-text-height" style="text-align: left">
+          {{ scope.row.name }}
+        </div>
+        <div class="table-text-height" style="color: grey; text-align: left">
           {{ scope.row.fundcode }}
         </div>
       </template>
@@ -36,7 +38,7 @@
       </template>
       <template #default="scope">
         <div class="value-cell">
-          <div>
+          <div class="table-text-height">
             {{ scope.row.dwjz }}
           </div>
           <div
@@ -45,14 +47,15 @@
                 'price-up': scope.row.jzzl > 0,
                 'price-down': scope.row.jzzl < 0
               },
-              'change-percent'
+              'change-percent',
+              'table-text-height'
             ]"
           >
             {{ (scope.row.jzzl > 0 ? '+' : '') + scope.row.jzzl }}%
           </div>
           <div
             v-if="scope.row.jzrq && scope.row.jzrq !== valueDate.net"
-            class="value-date"
+            class="value-date table-text-height"
           >
             {{ scope.row.jzrq.slice(5, 10) }}
           </div>
@@ -78,14 +81,15 @@
       </template>
       <template #default="scope">
         <div class="value-cell">
-          <div>{{ scope.row.gsz }}</div>
+          <div class="table-text-height">{{ scope.row.gsz }}</div>
           <div
             :class="[
               {
                 'price-up': scope.row.gszzl > 0,
                 'price-down': scope.row.gszzl < 0
               },
-              'change-percent'
+              'change-percent',
+              'table-text-height'
             ]"
           >
             {{ (scope.row.gszzl > 0 ? '+' : '') + scope.row.gszzl }}%
@@ -196,6 +200,11 @@ export default defineComponent({
 
 .change-percent {
   font-size: 0.8rem;
+}
+
+.table-text-height {
+  height: 20px;
+  line-height: 20px;
 }
 
 .price-up {

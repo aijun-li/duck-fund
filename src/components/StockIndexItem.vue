@@ -26,7 +26,7 @@
       ]"
     >
       <span>{{ change.toFixed(2) }}</span>
-      &nbsp;
+      &ensp;
       <span>{{ Number.isNaN(changeP) ? '0.00' : changeP.toFixed(2) }}</span>
     </div>
   </div>

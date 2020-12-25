@@ -34,6 +34,6 @@ export default defineComponent({
   padding-right: 1rem;
 }
 .el-col {
-  padding: 0.25rem 0;
+  padding: 3px 0;
 }
 </style>
