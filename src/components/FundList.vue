@@ -11,7 +11,7 @@
     <el-table-column label="基金名称" min-width="2">
       <template #default="scope">
         <div class="table-text-height" style="text-align: left">
-          {{ scope.row.name }}
+          {{ scope.row.name ? scope.row.name : 'loading...' }}
         </div>
         <div class="table-text-height" style="color: grey; text-align: left">
           {{ scope.row.fundcode }}
@@ -39,19 +39,23 @@
       <template #default="scope">
         <div class="value-cell">
           <div class="table-text-height">
-            {{ scope.row.dwjz }}
+            {{ scope.row.dwjz ? scope.row.dwjz : '0.0000' }}
           </div>
           <div
             :class="[
               {
-                'price-up': scope.row.jzzl > 0,
-                'price-down': scope.row.jzzl < 0
+                'price-up': scope.row.jzzl && scope.row.jzzl > 0,
+                'price-down': scope.row.jzzl && scope.row.jzzl < 0
               },
               'change-percent',
               'table-text-height'
             ]"
           >
-            {{ (scope.row.jzzl > 0 ? '+' : '') + scope.row.jzzl }}%
+            {{
+              `${scope.row.jzzl && scope.row.jzzl > 0 ? '+' : ''}${
+                scope.row.jzzl ? scope.row.jzzl : '0.00'
+              }`
+            }}%
           </div>
           <div
             v-if="scope.row.jzrq && scope.row.jzrq !== valueDate.net"
@@ -81,18 +85,24 @@
       </template>
       <template #default="scope">
         <div class="value-cell">
-          <div class="table-text-height">{{ scope.row.gsz }}</div>
+          <div class="table-text-height">
+            {{ scope.row.gsz ? scope.row.gsz : '0.0000' }}
+          </div>
           <div
             :class="[
               {
-                'price-up': scope.row.gszzl > 0,
-                'price-down': scope.row.gszzl < 0
+                'price-up': scope.row.gszzl && scope.row.gszzl > 0,
+                'price-down': scope.row.gszzl && scope.row.gszzl < 0
               },
               'change-percent',
               'table-text-height'
             ]"
           >
-            {{ (scope.row.gszzl > 0 ? '+' : '') + scope.row.gszzl }}%
+            {{
+              `${scope.row.gszzl && scope.row.gszzl > 0 ? '+' : ''}${
+                scope.row.gszzl ? scope.row.gszzl : '0.00'
+              }`
+            }}%
           </div>
         </div>
       </template>
