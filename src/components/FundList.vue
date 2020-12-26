@@ -125,45 +125,63 @@ import { computed, defineComponent, inject, onMounted, reactive } from 'vue'
 import { State, useStore } from '@/store'
 import { Store } from 'vuex'
 import StockPrice from '@/interfaces/StockPrice'
+import { isNowInTimePeriod } from '@/utils'
 
 function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
   const funds = computed(() => store.state.funds)
 
   function fetchPrice() {
     funds.value.forEach(async fund => {
+      let price: StockPrice = { fundcode: fund.fundcode }
+
       // retrieve the estimated value of fund
-      const { data: response1 } = await axios.get(
-        `http://fundgz.1234567.com.cn/js/${fund.fundcode}.js`,
-        {
-          headers: { 'Cache-Control': 'no-cache' }
-        }
-      )
-      const price: StockPrice = JSON.parse(
-        response1.match(/jsonpgz\((.*)\);/)![1]
-      )
-      // retrieve the previous day's change of value in percentage
-      const { data: response2 } = await axios.get(
-        `http://api.fund.eastmoney.com/f10/lsjz?fundCode=${fund.fundcode}&pageIndex=1&pageSize=1`,
-        {
-          headers: { 'Cache-Control': 'no-cache' }
-        }
-      )
-      const jz = response2.Data.LSJZList[0]
-      price.jzrq = jz.FSRQ
-      price.dwjz = jz.DWJZ
-      price.jzzl = jz.JZZZL
+      if (
+        !fund.gsz ||
+        !fund.gszzl ||
+        !fund.gztime ||
+        isNowInTimePeriod('09:30:00', '15:40:00')
+      ) {
+        const { data: response1 } = await axios.get(
+          `http://fundgz.1234567.com.cn/js/${fund.fundcode}.js`,
+          {
+            headers: { 'Cache-Control': 'no-cache' }
+          }
+        )
+        price = JSON.parse(response1.match(/jsonpgz\((.*)\);/)![1])
+      }
+
+      // retrieve the change of net value in percentage
+      if (
+        !fund.jzzl ||
+        (fund.gztime &&
+          isNowInTimePeriod('19:00:00', '23:59:59') &&
+          fund.jzrq !== fund.gztime.slice(0, 10))
+      ) {
+        const { data: response2 } = await axios.get(
+          `http://api.fund.eastmoney.com/f10/lsjz?fundCode=${fund.fundcode}&pageIndex=1&pageSize=1`,
+          {
+            headers: { 'Cache-Control': 'no-cache' }
+          }
+        )
+        const jz = response2.Data.LSJZList[0]
+        price.jzrq = jz.FSRQ
+        price.dwjz = jz.DWJZ
+        price.jzzl = jz.JZZZL
+      }
 
       // update the displayed date of value
       if (
-        !valueDate.net ||
-        new Date(valueDate.net).getTime() < new Date(price.jzrq!).getTime()
+        price.jzrq &&
+        (!valueDate.net ||
+          new Date(valueDate.net).getTime() < new Date(price.jzrq!).getTime())
       ) {
         valueDate.net = price.jzrq
       }
       if (
-        !valueDate.estimate ||
-        new Date(valueDate.estimate).getTime() <
-          new Date(price.gztime!).getTime()
+        price.gztime &&
+        (!valueDate.estimate ||
+          new Date(valueDate.estimate).getTime() <
+            new Date(price.gztime!).getTime())
       ) {
         valueDate.estimate = price.gztime
       }

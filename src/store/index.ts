@@ -27,7 +27,9 @@ export default createStore({
       const index = state.funds.findIndex(
         item => item.fundcode === price.fundcode
       )
-      state.funds.splice(index, 1, price)
+      for (const property in price) {
+        state.funds[index][property] = price[property]
+      }
     }
   },
   actions: {}
