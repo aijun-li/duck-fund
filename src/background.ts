@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, session } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -72,6 +72,18 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+
+  // Add referer to requests
+  const filter = {
+    urls: ['https://*/*', 'http://*/*']
+  }
+  session.defaultSession.webRequest.onBeforeSendHeaders(
+    filter,
+    (details, callback) => {
+      details.requestHeaders['Referer'] = 'https://fund.eastmoney.com/'
+      callback({ requestHeaders: details.requestHeaders })
+    }
+  )
 })
 
 // Exit cleanly on request from parent process in development mode.
