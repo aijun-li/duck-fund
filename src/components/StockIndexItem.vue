@@ -11,11 +11,13 @@
       {{ info.price.toFixed(2) }}
       <font-awesome-icon
         class="arrow-indicator"
-        v-if="change != 0"
-        :icon="[
-          'fas',
-          change < 0 ? 'long-arrow-alt-down' : 'long-arrow-alt-up'
-        ]"
+        v-if="change > 0"
+        :icon="['fas', 'long-arrow-alt-up']"
+      />
+      <font-awesome-icon
+        class="arrow-indicator"
+        v-else-if="change < 0"
+        :icon="['fas', 'long-arrow-alt-down']"
       />
     </div>
     <div
