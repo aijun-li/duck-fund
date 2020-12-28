@@ -27,12 +27,21 @@ function windowControl() {
   const isPinned = ref(win.isAlwaysOnTop())
   const isFocused = ref(win.isFocused())
 
-  win.on('focus', () => {
+  function focus() {
     isFocused.value = true
-  })
-  win.on('blur', () => {
+  }
+  function blur() {
     isFocused.value = false
-  })
+  }
+
+  win.addListener('focus', focus)
+  win.addListener('blur', blur)
+
+  // remove listeners before refreshing to prevent memory leak
+  window.onbeforeunload = () => {
+    win.removeListener('focus', focus)
+    win.removeListener('blur', blur)
+  }
 
   function pinWindow() {
     isPinned.value = !isPinned.value
