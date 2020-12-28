@@ -14,7 +14,12 @@ async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 400,
-    height: 796,
+    height:
+      process.platform === 'darwin'
+        ? 796
+        : process.platform === 'win32'
+        ? 802
+        : 800,
     resizable: false,
     frame: false,
     titleBarStyle: 'hidden',
