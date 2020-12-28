@@ -180,7 +180,10 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
           new Date(valueDate.net).getTime() < new Date(price.jzrq!).getTime())
       ) {
         valueDate.net = price.jzrq
+      } else if (fund.jzrq && !valueDate.net) {
+        valueDate.net = fund.jzrq
       }
+
       if (
         price.gztime &&
         (!valueDate.estimate ||
@@ -188,6 +191,8 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
             new Date(price.gztime!).getTime())
       ) {
         valueDate.estimate = price.gztime
+      } else if (fund.gztime && !valueDate.estimate) {
+        valueDate.estimate = fund.gztime
       }
 
       store.commit('updateFund', price)
