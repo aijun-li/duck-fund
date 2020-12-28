@@ -7,6 +7,7 @@
     }"
     :cell-style="{ padding: '3px 0', 'font-size': '0.85rem' }"
     :height="615"
+    empty-text="暂无关注基金"
   >
     <el-table-column label="基金名称" min-width="2">
       <template #default="scope">
