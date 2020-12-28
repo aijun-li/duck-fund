@@ -1,9 +1,25 @@
-import { ElButton, ElRow, ElCol, ElTable, ElTableColumn } from 'element-plus'
+import {
+  ElButton,
+  ElRow,
+  ElCol,
+  ElTable,
+  ElTableColumn,
+  ElInput,
+  ElCard
+} from 'element-plus'
 import lang from 'element-plus/lib/locale/lang/zh-cn'
 import locale from 'element-plus/lib/locale'
 import { App } from 'vue'
 
-const components = [ElButton, ElRow, ElCol, ElTable, ElTableColumn]
+const components = [
+  ElButton,
+  ElRow,
+  ElCol,
+  ElTable,
+  ElTableColumn,
+  ElInput,
+  ElCard
+]
 
 export default (app: App) => {
   locale.use(lang)

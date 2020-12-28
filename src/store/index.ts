@@ -30,6 +30,25 @@ export default createStore({
       for (const property in price) {
         state.funds[index][property] = price[property]
       }
+    },
+    // add new fund
+    addFund(state, payload) {
+      state.funds.push({ fundcode: payload.fundcode })
+      localStorage.setItem(
+        'storedFunds',
+        state.funds.map(fund => fund.fundcode).join(',')
+      )
+    },
+    // remove existing fund
+    removeFund(state, payload) {
+      const index = state.funds.findIndex(
+        fund => fund.fundcode === payload.fundcode
+      )
+      state.funds.splice(index, 1)
+      localStorage.setItem(
+        'storedFunds',
+        state.funds.map(fund => fund.fundcode).join(',')
+      )
     }
   },
   actions: {}

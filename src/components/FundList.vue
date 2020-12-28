@@ -111,11 +111,15 @@
 
   <!-- Update info -->
   <el-row class="bottom-info">
-    <el-col :span="12">数据来源: 天天基金网</el-col>
-    <el-col :span="12" style="text-align: right"
-      >估值更新于
-      {{ valueDate.estimate ? valueDate.estimate.slice(-5) : '--:--' }}</el-col
-    >
+    <el-col :span="12" class="icon-area">
+      <router-link to="/search" replace>
+        <font-awesome-icon :icon="['fas', 'search']"></font-awesome-icon>
+      </router-link>
+    </el-col>
+    <el-col :span="12" style="text-align: right">
+      估值更新于
+      {{ valueDate.estimate ? valueDate.estimate.slice(-5) : '--:--' }}
+    </el-col>
   </el-row>
 </template>
 
@@ -247,5 +251,17 @@ export default defineComponent({
   font-size: 0.75rem;
   color: grey;
   padding: 0.2rem 0.6rem;
+
+  .icon-area {
+    display: flex;
+    align-items: center;
+
+    a {
+      color: grey;
+      &:hover {
+        color: black;
+      }
+    }
+  }
 }
 </style>
