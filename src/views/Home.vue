@@ -12,6 +12,7 @@ import FundList from '@/components/FundList.vue'
 import StockIndex from '@/components/StockIndex.vue'
 
 export default defineComponent({
+  name: 'Home',
   components: {
     StockIndex,
     FundList

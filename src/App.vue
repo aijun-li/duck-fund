@@ -1,7 +1,11 @@
 <template>
   <mac-title-bar v-if="platform === 'darwin'"></mac-title-bar>
   <win-title-bar v-else-if="platform === 'win32'"></win-title-bar>
-  <router-view></router-view>
+  <router-view v-slot="{ Component }">
+    <keep-alive include="Home">
+      <component :is="Component" />
+    </keep-alive>
+  </router-view>
 </template>
 
 <script lang="ts">
