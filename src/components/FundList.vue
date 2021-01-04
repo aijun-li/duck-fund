@@ -138,7 +138,7 @@ import {
 import { State, useStore } from '@/store'
 import { Store } from 'vuex'
 import StockPrice from '@/interfaces/StockPrice'
-import { isNowInTimePeriod } from '@/utils'
+import { isNowInTimePeriod, isWeekday } from '@/utils'
 
 function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
   const funds = computed(() => store.state.funds)
@@ -154,7 +154,7 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
           !fund.gsz ||
           !fund.gszzl ||
           !fund.gztime ||
-          isNowInTimePeriod('09:30:00', '15:40:00')
+          (isWeekday() && isNowInTimePeriod('09:30:00', '15:10:00'))
         ) {
           isFetching.value = true
           const { data: response1 } = await axios.get(
@@ -170,6 +170,7 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
         if (
           !fund.jzzl ||
           (fund.gztime &&
+            isWeekday() &&
             isNowInTimePeriod('19:00:00', '23:59:59') &&
             fund.jzrq !== fund.gztime.slice(0, 10))
         ) {

@@ -16,3 +16,9 @@ export function isNowInTimePeriod(start: string, end: string): boolean {
   const s = `${hours}:${minutes}:${seconds}`
   return s >= start && s <= end
 }
+
+// judge if today is weekday
+export function isWeekday() {
+  const day = new Date().getDay()
+  return day !== 0 && day !== 6
+}

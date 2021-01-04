@@ -37,7 +37,7 @@
 <script lang="ts">
 import { AxiosStatic } from 'axios'
 import { computed, defineComponent, inject, onMounted, reactive } from 'vue'
-import { isNowInTimePeriod } from '@/utils'
+import { isNowInTimePeriod, isWeekday } from '@/utils'
 
 const indexCode = new Map([
   ['上证指数', '1.000001'],
@@ -84,7 +84,7 @@ export default defineComponent({
     fetchIndexInfo(code)
     onMounted(() => {
       setInterval(() => {
-        if (isNowInTimePeriod('09:29:30', '15:30:30')) {
+        if (isWeekday() && isNowInTimePeriod('09:29:30', '15:00:30')) {
           fetchIndexInfo(code)
         }
       }, 10000)
