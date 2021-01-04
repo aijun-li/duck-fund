@@ -118,6 +118,7 @@
       </router-link>
     </el-col>
     <el-col :span="12" style="text-align: right">
+      <i v-if="isFetching" class="el-icon-loading" style="color: black"></i>
       估值更新于
       {{ valueDate.estimate ? valueDate.estimate.slice(-5) : '--:--' }}
     </el-col>
@@ -126,7 +127,14 @@
 
 <script lang="ts">
 import { AxiosStatic } from 'axios'
-import { computed, defineComponent, inject, onMounted, reactive } from 'vue'
+import {
+  computed,
+  defineComponent,
+  inject,
+  onMounted,
+  reactive,
+  ref
+} from 'vue'
 import { State, useStore } from '@/store'
 import { Store } from 'vuex'
 import StockPrice from '@/interfaces/StockPrice'
@@ -134,73 +142,86 @@ import { isNowInTimePeriod } from '@/utils'
 
 function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
   const funds = computed(() => store.state.funds)
+  const isFetching = ref(false)
 
-  function fetchPrice() {
-    funds.value.forEach(async fund => {
-      let price: StockPrice = { fundcode: fund.fundcode }
+  async function fetchPrice() {
+    const prices = await Promise.allSettled(
+      funds.value.map(async fund => {
+        let price: StockPrice = { fundcode: fund.fundcode }
 
-      // retrieve the estimated value of fund
-      if (
-        !fund.gsz ||
-        !fund.gszzl ||
-        !fund.gztime ||
-        isNowInTimePeriod('09:30:00', '15:40:00')
-      ) {
-        const { data: response1 } = await axios.get(
-          `http://fundgz.1234567.com.cn/js/${fund.fundcode}.js`,
-          {
-            headers: { 'Cache-Control': 'no-cache' }
-          }
-        )
-        price = JSON.parse(response1.match(/jsonpgz\((.*)\);/)![1])
+        // retrieve the estimated value of fund
+        if (
+          !fund.gsz ||
+          !fund.gszzl ||
+          !fund.gztime ||
+          isNowInTimePeriod('09:30:00', '15:40:00')
+        ) {
+          isFetching.value = true
+          const { data: response1 } = await axios.get(
+            `http://fundgz.1234567.com.cn/js/${fund.fundcode}.js`,
+            {
+              headers: { 'Cache-Control': 'no-cache' }
+            }
+          )
+          price = JSON.parse(response1.match(/jsonpgz\((.*)\);/)![1])
+        }
+
+        // retrieve the change of net value in percentage
+        if (
+          !fund.jzzl ||
+          (fund.gztime &&
+            isNowInTimePeriod('19:00:00', '23:59:59') &&
+            fund.jzrq !== fund.gztime.slice(0, 10))
+        ) {
+          isFetching.value = true
+          const { data: response2 } = await axios.get(
+            `http://api.fund.eastmoney.com/f10/lsjz?fundCode=${fund.fundcode}&pageIndex=1&pageSize=1`,
+            {
+              headers: { 'Cache-Control': 'no-cache' }
+            }
+          )
+          const jz = response2.Data.LSJZList[0]
+          price.jzrq = jz.FSRQ
+          price.dwjz = jz.DWJZ
+          price.jzzl = jz.JZZZL
+        }
+
+        // update the displayed date of value
+        if (
+          price.jzrq &&
+          (!valueDate.net ||
+            new Date(valueDate.net).getTime() < new Date(price.jzrq!).getTime())
+        ) {
+          valueDate.net = price.jzrq
+        } else if (fund.jzrq && !valueDate.net) {
+          valueDate.net = fund.jzrq
+        }
+
+        if (
+          price.gztime &&
+          (!valueDate.estimate ||
+            new Date(valueDate.estimate).getTime() <
+              new Date(price.gztime!).getTime())
+        ) {
+          valueDate.estimate = price.gztime
+        } else if (fund.gztime && !valueDate.estimate) {
+          valueDate.estimate = fund.gztime
+        }
+
+        return price
+      })
+    )
+
+    prices.forEach(price => {
+      if (price.status === 'fulfilled') {
+        store.commit('updateFund', price.value)
       }
-
-      // retrieve the change of net value in percentage
-      if (
-        !fund.jzzl ||
-        (fund.gztime &&
-          isNowInTimePeriod('19:00:00', '23:59:59') &&
-          fund.jzrq !== fund.gztime.slice(0, 10))
-      ) {
-        const { data: response2 } = await axios.get(
-          `http://api.fund.eastmoney.com/f10/lsjz?fundCode=${fund.fundcode}&pageIndex=1&pageSize=1`,
-          {
-            headers: { 'Cache-Control': 'no-cache' }
-          }
-        )
-        const jz = response2.Data.LSJZList[0]
-        price.jzrq = jz.FSRQ
-        price.dwjz = jz.DWJZ
-        price.jzzl = jz.JZZZL
-      }
-
-      // update the displayed date of value
-      if (
-        price.jzrq &&
-        (!valueDate.net ||
-          new Date(valueDate.net).getTime() < new Date(price.jzrq!).getTime())
-      ) {
-        valueDate.net = price.jzrq
-      } else if (fund.jzrq && !valueDate.net) {
-        valueDate.net = fund.jzrq
-      }
-
-      if (
-        price.gztime &&
-        (!valueDate.estimate ||
-          new Date(valueDate.estimate).getTime() <
-            new Date(price.gztime!).getTime())
-      ) {
-        valueDate.estimate = price.gztime
-      } else if (fund.gztime && !valueDate.estimate) {
-        valueDate.estimate = fund.gztime
-      }
-
-      store.commit('updateFund', price)
     })
+
+    isFetching.value = false
   }
 
-  return { funds, fetchPrice }
+  return { funds, fetchPrice, isFetching }
 }
 
 export default defineComponent({
@@ -209,14 +230,14 @@ export default defineComponent({
     const store = useStore()
 
     const valueDate = reactive({ net: '', estimate: '' })
-    const { funds, fetchPrice } = fetchData(axios, store, valueDate)
+    const { funds, fetchPrice, isFetching } = fetchData(axios, store, valueDate)
 
     fetchPrice()
     onMounted(() => {
       setInterval(fetchPrice, 30000)
     })
 
-    return { funds, valueDate }
+    return { funds, valueDate, isFetching }
   }
 })
 </script>
