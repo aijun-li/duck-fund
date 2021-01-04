@@ -6,6 +6,7 @@
         placeholder="请输入基金代码、名称或简拼"
         @keyup="fetchSuggestions(keyword)"
         ref="inputRef"
+        clearable
       ></el-input>
     </el-col>
     <el-col :span="5" style="text-align: right">
