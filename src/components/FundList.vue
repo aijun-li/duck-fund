@@ -145,7 +145,7 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
   const isFetching = ref(false)
 
   async function fetchPrice() {
-    const prices = await Promise.allSettled(
+    await Promise.allSettled(
       funds.value.map(async fund => {
         let price: StockPrice = { fundcode: fund.fundcode }
 
@@ -157,6 +157,7 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
           (isWeekday() && isNowInTimePeriod('09:30:00', '15:10:00'))
         ) {
           isFetching.value = true
+
           const { data: response1 } = await axios.get(
             `http://fundgz.1234567.com.cn/js/${fund.fundcode}.js`,
             {
@@ -175,6 +176,7 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
             fund.jzrq !== fund.gztime.slice(0, 10))
         ) {
           isFetching.value = true
+
           const { data: response2 } = await axios.get(
             `http://api.fund.eastmoney.com/f10/lsjz?fundCode=${fund.fundcode}&pageIndex=1&pageSize=1`,
             {
@@ -203,17 +205,15 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
           valueDate.estimate = fund.gztime
         }
 
-        return price
+        // commit the update
+        store.commit('updateFund', price)
       })
     )
 
-    prices.forEach(price => {
-      if (price.status === 'fulfilled') {
-        store.commit('updateFund', price.value)
-      }
-    })
-
-    isFetching.value = false
+    // hide loading icon in 1s after updating is done
+    setTimeout(() => {
+      isFetching.value = false
+    }, 1000)
   }
 
   return { funds, fetchPrice, isFetching }
