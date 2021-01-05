@@ -141,6 +141,7 @@ import {
   computed,
   defineComponent,
   inject,
+  onActivated,
   onMounted,
   reactive,
   ref
@@ -249,6 +250,10 @@ export default defineComponent({
     fetchPrice(true)
     onMounted(() => {
       timer = window.setInterval(() => fetchPrice(false), 30000)
+    })
+
+    onActivated(() => {
+      fetchPrice(true)
     })
 
     return { funds, valueDate, isFetching, refresh }
