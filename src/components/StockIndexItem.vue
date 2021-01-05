@@ -35,9 +35,9 @@
 </template>
 
 <script lang="ts">
-import { AxiosStatic } from 'axios'
-import { computed, defineComponent, inject, onMounted, reactive } from 'vue'
+import { computed, defineComponent, onMounted, reactive } from 'vue'
 import { isNowInTimePeriod, isWeekday } from '@/utils'
+import axios from '@/plugins/axios'
 
 const indexCode = new Map([
   ['上证指数', '1.000001'],
@@ -48,7 +48,7 @@ const indexCode = new Map([
   ['中证500', '1.000905']
 ])
 
-function fetchData(axios: AxiosStatic) {
+function useFetch() {
   const info = reactive({
     price: 0,
     pre: 0
@@ -74,10 +74,9 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const axios = inject<AxiosStatic>('axios')!
     const code = indexCode.get(props.name)!
 
-    const { info, fetchIndexInfo } = fetchData(axios)
+    const { info, fetchIndexInfo } = useFetch()
     const change = computed(() => info.price - info.pre)
     const changeP = computed(() => (change.value / info.pre) * 100)
 

@@ -31,7 +31,7 @@
 import { defineComponent, ref } from 'vue'
 import { remote } from 'electron'
 
-function windowControl() {
+function useWindowControl() {
   const win = remote.getCurrentWindow()
   const isPinned = ref(win.isAlwaysOnTop())
 
@@ -53,7 +53,12 @@ function windowControl() {
 
 export default defineComponent({
   setup() {
-    const { isPinned, pinWindow, minimizeWindow, closeWindow } = windowControl()
+    const {
+      isPinned,
+      pinWindow,
+      minimizeWindow,
+      closeWindow
+    } = useWindowControl()
 
     return { isPinned, pinWindow, minimizeWindow, closeWindow }
   }

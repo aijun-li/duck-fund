@@ -22,7 +22,7 @@
 import { defineComponent, ref } from 'vue'
 import { remote } from 'electron'
 
-function windowControl() {
+function useWindowControl() {
   const win = remote.getCurrentWindow()
   const isPinned = ref(win.isAlwaysOnTop())
   const isFocused = ref(win.isFocused())
@@ -53,7 +53,7 @@ function windowControl() {
 
 export default defineComponent({
   setup() {
-    const { isPinned, isFocused, pinWindow } = windowControl()
+    const { isPinned, isFocused, pinWindow } = useWindowControl()
 
     return { isPinned, isFocused, pinWindow }
   }

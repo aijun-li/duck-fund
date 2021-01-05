@@ -136,11 +136,9 @@
 </template>
 
 <script lang="ts">
-import { AxiosStatic } from 'axios'
 import {
   computed,
   defineComponent,
-  inject,
   onActivated,
   onMounted,
   reactive,
@@ -150,9 +148,11 @@ import { State, useStore } from '@/store'
 import { Store } from 'vuex'
 import StockPrice from '@/interfaces/StockPrice'
 import { isNowInTimePeriod, isWeekday } from '@/utils'
+import axios from '@/plugins/axios'
 
-function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
+function useFetch(store: Store<State>) {
   const funds = computed(() => store.state.funds)
+  const valueDate = reactive({ net: '', estimate: '' })
   const isFetching = ref(false)
 
   async function fetchPrice(force: boolean) {
@@ -229,17 +229,15 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
     }, 1000)
   }
 
-  return { funds, fetchPrice, isFetching }
+  return { funds, fetchPrice, isFetching, valueDate }
 }
 
 export default defineComponent({
   setup() {
-    const axios = inject<AxiosStatic>('axios')!
     const store = useStore()
     let timer: number
 
-    const valueDate = reactive({ net: '', estimate: '' })
-    const { funds, fetchPrice, isFetching } = fetchData(axios, store, valueDate)
+    const { funds, fetchPrice, isFetching, valueDate } = useFetch(store)
 
     function refresh() {
       clearInterval(timer)

@@ -51,13 +51,13 @@
 
 <script lang="ts">
 import StockPrice from '@/interfaces/StockPrice'
-import { AxiosStatic } from 'axios'
-import { defineComponent, inject, onMounted, Ref, ref } from 'vue'
+import axios from '@/plugins/axios'
+import { defineComponent, onMounted, Ref, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { State, useStore } from '@/store'
 import { Store } from 'vuex'
 
-function autoSuggest(delay: number, axios: AxiosStatic, store: Store<State>) {
+function useSuggestion(delay: number, store: Store<State>) {
   const suggestions = ref([] as StockPrice[])
 
   let timer: number
@@ -96,13 +96,11 @@ function autoSuggest(delay: number, axios: AxiosStatic, store: Store<State>) {
 export default defineComponent({
   setup() {
     const router = useRouter()
-    const axios = inject<AxiosStatic>('axios')!
     const store = useStore()
     const keyword = ref('')
     const inputRef: Ref<any> = ref(null)
-    const { suggestions, fetchSuggestions, addOrRemove } = autoSuggest(
+    const { suggestions, fetchSuggestions, addOrRemove } = useSuggestion(
       300,
-      axios,
       store
     )
 
