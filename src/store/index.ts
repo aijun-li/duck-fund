@@ -17,26 +17,36 @@ export default createStore({
     initializeFunds(state) {
       const storedFunds = localStorage.getItem('storedFunds')
       if (storedFunds) {
-        state.funds = storedFunds.split(',').map((fundcode: string) => ({
-          fundcode
+        state.funds = storedFunds.split(',').map((fund: string) => ({
+          fundcode: fund.split('|')[0],
+          hold: JSON.parse(fund.split('|')[1])
         }))
       }
     },
     // update the existing fund
-    updateFund(state, price: StockPrice) {
+    updateFund(state, fund: StockPrice) {
       const index = state.funds.findIndex(
-        item => item.fundcode === price.fundcode
+        item => item.fundcode === fund.fundcode
       )
-      for (const property in price) {
-        state.funds[index][property] = price[property]
+      const shouldSave = fund.hold !== state.funds[index].hold
+
+      for (const property in fund) {
+        state.funds[index][property] = fund[property]
+      }
+
+      if (shouldSave) {
+        localStorage.setItem(
+          'storedFunds',
+          state.funds.map(fund => `${fund.fundcode}|${fund.hold}`).join(',')
+        )
       }
     },
     // add new fund
-    addFund(state, payload) {
-      state.funds.push({ fundcode: payload.fundcode })
+    addFund(state, fund: StockPrice) {
+      state.funds.push(fund)
       localStorage.setItem(
         'storedFunds',
-        state.funds.map(fund => fund.fundcode).join(',')
+        state.funds.map(fund => `${fund.fundcode}|${fund.hold}`).join(',')
       )
     },
     // remove existing fund
@@ -47,7 +57,7 @@ export default createStore({
       state.funds.splice(index, 1)
       localStorage.setItem(
         'storedFunds',
-        state.funds.map(fund => fund.fundcode).join(',')
+        state.funds.map(fund => `${fund.fundcode}|${fund.hold}`).join(',')
       )
     }
   },

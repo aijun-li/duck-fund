@@ -15,7 +15,8 @@
           {{ scope.row.name ? scope.row.name : 'loading...' }}
         </div>
         <div class="table-text-height" style="color: grey; text-align: left">
-          {{ scope.row.fundcode }}
+          <span>{{ scope.row.fundcode }}</span>
+          <span v-if="scope.row.hold" class="hold-icon">持有</span>
         </div>
       </template>
     </el-table-column>
@@ -289,6 +290,16 @@ export default defineComponent({
 
 .price-down {
   color: green;
+}
+
+.hold-icon {
+  margin-left: 8px;
+  padding: 2px 5px;
+  font-size: 11px;
+  border-radius: 2px;
+  vertical-align: top;
+  color: #409eff;
+  background-color: #ecf5ff;
 }
 
 .bottom-info {

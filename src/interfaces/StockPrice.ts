@@ -8,4 +8,5 @@ export default interface StockPrice {
   gztime?: string
   jzzl?: string
   isStored?: boolean
+  hold: boolean
 }
