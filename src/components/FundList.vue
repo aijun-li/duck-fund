@@ -203,16 +203,22 @@ function useFetch(store: Store<State>) {
           price.jzzl = jz.JZZZL
         }
 
-        // update the displayed date of net value
-        if (price.jzrq && (!valueDate.net || valueDate.net !== price.jzrq)) {
+        // update the displayed date of value
+        if (
+          price.jzrq &&
+          (!valueDate.net ||
+            new Date(valueDate.net).getTime() < new Date(price.jzrq!).getTime())
+        ) {
           valueDate.net = price.jzrq
         } else if (fund.jzrq && !valueDate.net) {
           valueDate.net = fund.jzrq
         }
-        // update the displayed date of estimated value
+
         if (
           price.gztime &&
-          (!valueDate.estimate || valueDate.estimate !== price.gztime)
+          (!valueDate.estimate ||
+            new Date(valueDate.estimate).getTime() <
+              new Date(price.gztime!).getTime())
         ) {
           valueDate.estimate = price.gztime
         } else if (fund.gztime && !valueDate.estimate) {
