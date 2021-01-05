@@ -292,6 +292,7 @@ export default defineComponent({
   font-size: 0.75rem;
   color: grey;
   padding: 0.2rem 0.6rem;
+  flex: 1;
 
   .icon-area {
     display: flex;
