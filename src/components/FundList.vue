@@ -118,7 +118,17 @@
       </router-link>
     </el-col>
     <el-col :span="12" style="text-align: right">
-      <i v-if="isFetching" class="el-icon-loading" style="color: black"></i>
+      <i
+        v-if="isFetching"
+        class="el-icon-loading"
+        style="font-weight: bold"
+      ></i>
+      <i
+        v-else
+        class="el-icon-refresh"
+        style="font-weight: bold"
+        @click="refresh"
+      ></i>
       估值更新于
       {{ valueDate.estimate ? valueDate.estimate.slice(-5) : '--:--' }}
     </el-col>
@@ -144,13 +154,14 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
   const funds = computed(() => store.state.funds)
   const isFetching = ref(false)
 
-  async function fetchPrice() {
+  async function fetchPrice(force: boolean) {
     await Promise.allSettled(
       funds.value.map(async fund => {
         let price: StockPrice = { fundcode: fund.fundcode }
 
         // retrieve the estimated value of fund
         if (
+          force ||
           !fund.gsz ||
           !fund.gszzl ||
           !fund.gztime ||
@@ -169,6 +180,7 @@ function fetchData(axios: AxiosStatic, store: Store<State>, valueDate: any) {
 
         // retrieve the change of net value in percentage
         if (
+          force ||
           !fund.jzzl ||
           (fund.gztime &&
             isWeekday() &&
@@ -223,16 +235,23 @@ export default defineComponent({
   setup() {
     const axios = inject<AxiosStatic>('axios')!
     const store = useStore()
+    let timer: number
 
     const valueDate = reactive({ net: '', estimate: '' })
     const { funds, fetchPrice, isFetching } = fetchData(axios, store, valueDate)
 
-    fetchPrice()
+    function refresh() {
+      clearInterval(timer)
+      fetchPrice(true)
+      timer = window.setInterval(() => fetchPrice(false), 30000)
+    }
+
+    fetchPrice(true)
     onMounted(() => {
-      setInterval(fetchPrice, 30000)
+      timer = window.setInterval(() => fetchPrice(false), 30000)
     })
 
-    return { funds, valueDate, isFetching }
+    return { funds, valueDate, isFetching, refresh }
   }
 })
 </script>
@@ -283,6 +302,18 @@ export default defineComponent({
       &:hover {
         color: black;
       }
+    }
+  }
+
+  .el-icon-loading {
+    vertical-align: middle;
+  }
+
+  .el-icon-refresh {
+    cursor: pointer;
+    vertical-align: middle;
+    &:hover {
+      color: black;
     }
   }
 }
