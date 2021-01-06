@@ -119,17 +119,13 @@
         <font-awesome-icon :icon="['fas', 'search']"></font-awesome-icon>
       </router-link>
     </el-col>
-    <el-col :span="12" style="text-align: right">
-      <i
-        v-if="isFetching"
-        class="el-icon-loading"
-        style="font-weight: bold"
-      ></i>
+    <el-col :span="12" class="update-area">
+      <i v-if="isFetching" class="el-icon-loading"></i>
       <i
         v-else
         class="el-icon-refresh"
-        style="font-weight: bold"
         @click="refresh"
+        :style="{ 'margin-top': platform === 'darwin' ? '1px' : '0' }"
       ></i>
       估值更新于
       {{ valueDate.estimate ? valueDate.estimate.slice(-5) : '--:--' }}
@@ -269,6 +265,7 @@ function useContextMenu(store: Store<State>) {
 export default defineComponent({
   setup() {
     const store = useStore()
+    const platform = process.platform
     let timer: number
 
     const { funds, fetchPrice, isFetching, valueDate } = useFetch(store)
@@ -288,7 +285,7 @@ export default defineComponent({
       clearInterval(timer)
     })
 
-    return { funds, valueDate, isFetching, refresh, showContextMenu }
+    return { funds, valueDate, isFetching, refresh, showContextMenu, platform }
   }
 })
 </script>
@@ -353,15 +350,24 @@ export default defineComponent({
     }
   }
 
-  .el-icon-loading {
-    vertical-align: middle;
-  }
+  .update-area {
+    display: flex;
+    justify-content: flex-end;
 
-  .el-icon-refresh {
-    cursor: pointer;
-    vertical-align: middle;
-    &:hover {
-      color: black;
+    .el-icon-loading {
+      margin-right: 5px;
+      font-weight: bold;
+      align-self: center;
+    }
+
+    .el-icon-refresh {
+      cursor: pointer;
+      margin-right: 5px;
+      font-weight: bold;
+      align-self: center;
+      &:hover {
+        color: black;
+      }
     }
   }
 }
