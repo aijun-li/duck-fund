@@ -159,7 +159,7 @@ function useFetch(store: Store<State>) {
   async function fetchPrice(force: boolean) {
     await Promise.allSettled(
       funds.value.map(async fund => {
-        let price: StockPrice = { fundcode: fund.fundcode }
+        let price: StockPrice = { fundcode: fund.fundcode, hold: fund.hold }
 
         // retrieve the estimated value of fund
         if (
