@@ -303,8 +303,8 @@ export default defineComponent({
   font-size: 11px;
   border-radius: 2px;
   vertical-align: top;
-  color: #409eff;
-  background-color: #ecf5ff;
+  color: #3765fd;
+  background-color: #e0eefd;
 }
 
 .bottom-info {
