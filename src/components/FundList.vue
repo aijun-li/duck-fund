@@ -141,7 +141,7 @@ import {
   computed,
   defineComponent,
   onActivated,
-  onMounted,
+  onDeactivated,
   reactive,
   ref
 } from 'vue'
@@ -252,13 +252,12 @@ export default defineComponent({
       timer = window.setInterval(() => fetchPrice(false), 30000)
     }
 
-    fetchPrice(true)
-    onMounted(() => {
-      timer = window.setInterval(() => fetchPrice(false), 30000)
+    onActivated(() => {
+      refresh()
     })
 
-    onActivated(() => {
-      fetchPrice(true)
+    onDeactivated(() => {
+      clearInterval(timer)
     })
 
     return { funds, valueDate, isFetching, refresh }

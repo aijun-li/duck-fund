@@ -35,7 +35,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, reactive } from 'vue'
+import {
+  computed,
+  defineComponent,
+  onActivated,
+  onDeactivated,
+  onMounted,
+  reactive
+} from 'vue'
 import { isNowInTimePeriod, isWeekday } from '@/utils'
 import axios from '@/plugins/axios'
 
@@ -75,18 +82,24 @@ export default defineComponent({
   },
   setup(props) {
     const code = indexCode.get(props.name)!
+    let timer: number
 
     const { info, fetchIndexInfo } = useFetch()
     const change = computed(() => info.price - info.pre)
     const changeP = computed(() => (change.value / info.pre) * 100)
 
-    fetchIndexInfo(code)
-    onMounted(() => {
-      setInterval(() => {
+    onActivated(() => {
+      clearInterval(timer)
+      fetchIndexInfo(code)
+      timer = window.setInterval(() => {
         if (isWeekday() && isNowInTimePeriod('09:29:30', '15:00:30')) {
           fetchIndexInfo(code)
         }
       }, 10000)
+    })
+
+    onDeactivated(() => {
+      clearInterval(timer)
     })
 
     return { info, change, changeP }
