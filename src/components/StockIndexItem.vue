@@ -40,7 +40,6 @@ import {
   defineComponent,
   onActivated,
   onDeactivated,
-  onMounted,
   reactive
 } from 'vue'
 import { isNowInTimePeriod, isWeekday } from '@/utils'

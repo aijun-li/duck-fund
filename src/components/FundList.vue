@@ -8,6 +8,7 @@
     :cell-style="{ padding: '3px 0', 'font-size': '0.85rem' }"
     :height="615"
     empty-text="暂无关注基金"
+    @row-contextmenu="showContextMenu"
   >
     <el-table-column label="基金名称" min-width="2">
       <template #default="scope">
@@ -150,6 +151,8 @@ import { Store } from 'vuex'
 import StockPrice from '@/interfaces/StockPrice'
 import { isNowInTimePeriod, isWeekday } from '@/utils'
 import axios from '@/plugins/axios'
+import { MenuItemConstructorOptions, remote } from 'electron'
+const { Menu, getCurrentWindow } = remote
 
 function useFetch(store: Store<State>) {
   const funds = computed(() => store.state.funds)
@@ -239,12 +242,37 @@ function useFetch(store: Store<State>) {
   return { funds, fetchPrice, isFetching, valueDate }
 }
 
+function useContextMenu(store: Store<State>) {
+  function showContextMenu({ fundcode, hold }: StockPrice) {
+    const template: MenuItemConstructorOptions[] = [
+      {
+        label: hold ? '取消持有' : '标记持有',
+        click() {
+          store.commit('updateFund', { fundcode, hold: !hold })
+        }
+      },
+      { type: 'separator' },
+      {
+        label: '取消关注',
+        click() {
+          store.commit('removeFund', { fundcode })
+        }
+      }
+    ]
+    const menu = Menu.buildFromTemplate(template)
+    menu.popup({ window: getCurrentWindow() })
+  }
+
+  return { showContextMenu }
+}
+
 export default defineComponent({
   setup() {
     const store = useStore()
     let timer: number
 
     const { funds, fetchPrice, isFetching, valueDate } = useFetch(store)
+    const { showContextMenu } = useContextMenu(store)
 
     function refresh() {
       clearInterval(timer)
@@ -260,7 +288,7 @@ export default defineComponent({
       clearInterval(timer)
     })
 
-    return { funds, valueDate, isFetching, refresh }
+    return { funds, valueDate, isFetching, refresh, showContextMenu }
   }
 })
 </script>
