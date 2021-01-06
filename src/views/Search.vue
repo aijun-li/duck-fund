@@ -20,7 +20,7 @@
       :key="suggestion.fundcode"
       shadow="hover"
       class="suggestion-item"
-      :body-style="{ padding: '10px' }"
+      :body-style="{ padding: platform === 'darwin' ? '10px' : '9px 10px' }"
     >
       <el-row>
         <el-col :span="18">
@@ -38,7 +38,7 @@
               @change="toggleStored($event, suggestion)"
             ></el-switch>
           </div>
-          <div style="margin-top: 3px">
+          <div :style="{ 'margin-top': `${platform === 'darwin' ? 3 : 1}px` }">
             <label class="switch-label">持有</label>
             <el-switch
               v-model="suggestion.hold"
@@ -124,6 +124,7 @@ export default defineComponent({
       toggleStored,
       toggleHold
     } = useSuggestion(300, store)
+    const platform = process.platform
 
     onMounted(() => {
       inputRef.value.focus()
@@ -140,7 +141,8 @@ export default defineComponent({
       fetchSuggestions,
       inputRef,
       toggleStored,
-      toggleHold
+      toggleHold,
+      platform
     }
   }
 })
