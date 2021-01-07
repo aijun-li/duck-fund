@@ -166,7 +166,9 @@ function useFetch(store: Store<State>) {
           !fund.gsz ||
           !fund.gszzl ||
           !fund.gztime ||
-          (isWeekday() && isNowInTimePeriod('09:30:00', '15:10:00'))
+          (isWeekday() &&
+            (isNowInTimePeriod('09:30:00', '11:40:00') ||
+              isNowInTimePeriod('13:00:00', '15:10:00')))
         ) {
           isFetching.value = true
 

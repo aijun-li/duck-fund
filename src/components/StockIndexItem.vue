@@ -91,7 +91,11 @@ export default defineComponent({
       clearInterval(timer)
       fetchIndexInfo(code)
       timer = window.setInterval(() => {
-        if (isWeekday() && isNowInTimePeriod('09:29:30', '15:00:30')) {
+        if (
+          isWeekday() &&
+          (isNowInTimePeriod('09:30:00', '11:30:30') ||
+            isNowInTimePeriod('13:00:00', '15:00:30'))
+        ) {
           fetchIndexInfo(code)
         }
       }, 10000)
