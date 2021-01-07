@@ -1,7 +1,11 @@
 module.exports = {
   pluginOptions: {
     electronBuilder: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      builderOptions: {
+        appId: 'com.anonymorse.fund',
+        productName: 'Duck Fund'
+      }
     }
   }
 }
