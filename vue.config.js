@@ -4,7 +4,8 @@ module.exports = {
       nodeIntegration: true,
       builderOptions: {
         appId: 'com.anonymorse.fund',
-        productName: 'Duck Fund'
+        productName: 'Duck Fund',
+        publish: ['github']
       }
     }
   }
