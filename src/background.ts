@@ -1,10 +1,39 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, session } from 'electron'
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  session,
+  MessageBoxOptions,
+  dialog
+} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
-import { autoUpdater } from 'electron-updater'
+import { autoUpdater, UpdateInfo } from 'electron-updater'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
+// auto update configuration
+autoUpdater.autoDownload = false
+autoUpdater.on('update-downloaded', () => {
+  autoUpdater.quitAndInstall(true, true)
+})
+autoUpdater.on('update-available', async (info: UpdateInfo) => {
+  const dialogOpt: MessageBoxOptions = {
+    type: 'info',
+    buttons: ['立即更新', '暂不更新'],
+    defaultId: 0,
+    cancelId: 1,
+    title: '软件更新',
+    message: `v${info.version}\n${info.releaseNotes}`,
+    detail: '检测到新版本，是否更新'
+  }
+
+  const { response: choice } = await dialog.showMessageBox(dialogOpt)
+  if (choice === 0) {
+    autoUpdater.downloadUpdate()
+  }
+})
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -42,7 +71,7 @@ async function createWindow() {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
-    autoUpdater.checkForUpdatesAndNotify()
+    autoUpdater.checkForUpdates()
   }
 }
 
