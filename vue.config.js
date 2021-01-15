@@ -7,7 +7,8 @@ module.exports = {
         productName: 'Duck Fund',
         publish: ['github'],
         releaseInfo: {
-          releaseNotes: '1. [新增] 支持自动更新'
+          releaseNotes:
+            '1. [优化] 支持自动重发请求\n2. [修复] 清空搜索输入框后清空搜索建议'
         }
       }
     }

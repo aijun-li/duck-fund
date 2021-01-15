@@ -135,7 +135,7 @@ if (isDevelopment) {
 app.setName('Duck Fund')
 app.setAboutPanelOptions({
   applicationName: 'Duck Fund',
-  applicationVersion: 'Version 0.1.2',
+  applicationVersion: 'Version 0.1.3',
   version: '',
   copyright: '数据来源: 天天基金网'
 })
