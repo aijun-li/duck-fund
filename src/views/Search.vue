@@ -7,6 +7,7 @@
         @keyup="fetchSuggestions(keyword)"
         ref="inputRef"
         clearable
+        @clear="suggestions = []"
       ></el-input>
     </el-col>
     <el-col :span="5" style="text-align: right">
