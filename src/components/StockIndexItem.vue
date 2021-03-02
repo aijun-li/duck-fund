@@ -61,12 +61,13 @@ function useFetch() {
   })
 
   async function fetchIndexInfo(code: string) {
-    const { data: response } = await axios.get(
-      `http://push2.eastmoney.com/api/qt/stock/trends2/get?secid=${code}&fields1=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13&fields2=f51,f52,f53,f54,f55,f56,f57,f58`
+    const {
+      data: { data: response }
+    } = await axios.get(
+      `http://push2.eastmoney.com/api/qt/stock/get?secid=${code}&fields=f43,f60`
     )
-    const data = response.data
-    info.pre = data.preClose
-    info.price = parseFloat(data.trends.pop().split(',')[2])
+    info.pre = response.f60 / 100
+    info.price = response.f43 / 100
   }
 
   return { info, fetchIndexInfo }
