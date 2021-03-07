@@ -312,7 +312,6 @@ export default defineComponent({
 }
 
 .table-text-height {
-  height: 20px;
   line-height: 20px;
 }
 
